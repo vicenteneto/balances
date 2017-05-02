@@ -3,7 +3,13 @@
   :url "http://github.com/vicenteneto/balances"
   :license {:name "MIT License"
             :url  "http://github.com/vicenteneto/balances/blob/master/LICENSE"}
-  :dependencies [[org.clojure/clojure "1.8.0"]]
-  :profiles {:dev     {:plugins      [[lein-midje "3.2.1"]]
-                       :dependencies [[midje "1.8.3"]]}
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [metosin/compojure-api "1.1.10"]]
+  :ring {:handler balances.core/handler}
+  :profiles {:dev     {:plugins      [[lein-midje "3.2.1"]
+                                      [lein-ring "0.11.0"]]
+                       :dependencies [[javax.servlet/servlet-api "2.5"]
+                                      [cheshire "5.7.1"]
+                                      [midje "1.8.3"]
+                                      [ring/ring-mock "0.3.0"]]}
              :uberjar {:aot :all}})

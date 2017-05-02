@@ -1,6 +1,14 @@
-(ns balances.core)
+(ns balances.core
+  (:require [compojure.api.sweet :refer [api]]
+            [balances.router :refer [api-routes]]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(def handler
+  (api
+    {:swagger
+     {:ui   "/"
+      :spec "/swagger.json"
+      :data {:info {:title       "Checking account service"
+                    :description "A service for checking accounts."}
+             :tags [{:name "api"}]}}}
+
+    api-routes))
