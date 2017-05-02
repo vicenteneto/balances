@@ -1,7 +1,6 @@
 (ns balances.core-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [balances.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(fact "Sample test with Midje"
+      (+ 1 1) => 2)
