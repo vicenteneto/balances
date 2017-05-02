@@ -2,9 +2,31 @@
 
 A checking account from a bank that allows putting or taking money at any given time.
 
+## Installation
+
+To build **Balances** from scratch on OSX or Linux:
+
+* Install [lein](https://leiningen.org/)
+* Install [datomic-free](https://my.datomic.com/downloads/free)
+* add path to datomic in your ~/.lein/profiles.clj
+    * {:user {:datomic {:install-location "/usr/local/datomic-0.9.5561"}}}
+* Download [balances](https://github.com/vicenteneto/balances)
+
+```bash
+$ git clone https://github.com/vicenteneto/balances.git
+$ cd balances
+```
+
 ## Usage
 
-FIXME
+* lein datomic start &
+* lein datomic initialize
+* lein ring server
+* At this point you should be able to go to http://localhost:3000/index.html in your browser and interact with the service
+
+## Tests
+
+* lein midje
 
 ## License
 
