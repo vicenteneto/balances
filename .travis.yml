@@ -1,4 +1,6 @@
+sudo: false
 language: clojure
-script: lein midje
 jdk:
-- oraclejdk8
+ - oraclejdk8
+script:
+ - ./build.sh
