@@ -1,0 +1,31 @@
+[
+ ;; transaction
+
+ {:db/id                 #db/id[:db.part/db]
+  :db/ident              :transaction/account-number
+  :db/valueType          :db.type/bigint
+  :db/cardinality        :db.cardinality/one
+  :db/doc                "The transaction's account number"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id                 #db/id[:db.part/db]
+  :db/ident              :transaction/description
+  :db/valueType          :db.type/string
+  :db/cardinality        :db.cardinality/one
+  :db/doc                "The transaction's short description"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id                 #db/id[:db.part/db]
+  :db/ident              :transaction/amount
+  :db/valueType          :db.type/bigdec
+  :db/cardinality        :db.cardinality/one
+  :db/doc                "The transaction's amount"
+  :db.install/_attribute :db.part/db}
+
+ {:db/id                 #db/id[:db.part/db]
+  :db/ident              :transaction/date
+  :db/valueType          :db.type/long
+  :db/cardinality        :db.cardinality/one
+  :db/doc                "The transaction's date"
+  :db.install/_attribute :db.part/db}
+]
