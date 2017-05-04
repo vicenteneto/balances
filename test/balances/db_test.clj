@@ -57,3 +57,16 @@
                                   :description    "Purchase on Uber 45.23 at 16/10"
                                   :amount         -45.23M
                                   :date           "2016-10-16T12:00:00.000Z"}])))
+
+(fact "Adding multiple transactions should allow us to get the current balance from a giving account"
+      (with-redefs [conn (create-empty-in-memory-db)]
+        (let [transaction-1 (add-transaction {:account-number 123
+                                              :description    "Deposit 1000.00 at 15/10"
+                                              :amount         1000
+                                              :date           "2016-10-15T10:30:45.000Z"})
+              transaction-2 (add-transaction {:account-number 123
+                                              :description    "Purchase on Amazon 50 at 16/10"
+                                              :amount         -50
+                                              :date           "2016-10-16T08:00:00.000Z"})]
+          (get-balance 123) => {:account-number 123N
+                                :balance        950M})))

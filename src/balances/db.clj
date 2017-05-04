@@ -54,3 +54,15 @@
                     :description (nth % 2)
                     :amount (nth % 3)
                     :date (str (c/from-long (nth % 4)))) res)))
+
+(defn get-balance
+  "Gets the current balance from a giving account"
+  [account-number]
+  (let [res (first (d/q '[:find ?account-number (sum ?amount)
+                          :in $ ?account-number
+                          :where
+                          [?id :transaction/account-number ?account-number]
+                          [?id :transaction/amount ?amount]]
+                        (d/db conn) account-number))]
+    {:account-number (first res)
+     :balance        (second res)}))

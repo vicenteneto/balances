@@ -10,3 +10,7 @@
 
 (s/defschema NewTransaction
   (dissoc Transaction :id))
+
+(s/defschema Account
+  {:account-number s/Int
+   :balance        s/Num})

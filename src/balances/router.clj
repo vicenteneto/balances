@@ -24,4 +24,10 @@
       :path-params [id :- Long]
       :return (s/maybe Transaction)
       :summary "Gets all details relevant to a transaction"
-      (ok (get-transaction id)))))
+      (ok (get-transaction id)))
+
+    (GET "/account/:number/balance" []
+      :path-params [number :- s/Int]
+      :return (s/maybe Account)
+      :summary "Gets the current balance from a giving account"
+      (ok (get-balance number)))))
