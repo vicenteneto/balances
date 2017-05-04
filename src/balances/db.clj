@@ -1,6 +1,7 @@
 (ns balances.db
   (:require [datomic.api :as d]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clj-time.format :as f]))
 
 (def uri "datomic:free://localhost:4334/balances")
 (def conn (d/connect uri))
@@ -66,3 +67,25 @@
                         (d/db conn) account-number))]
     {:account-number (first res)
      :balance        (second res)}))
+
+(defn get-bank-statement
+  "Retrieves bank statement of a given account"
+  [account-number]
+  (let [res (d/q '[:find ?id ?account-number ?description ?amount ?date
+                   :in $ ?account-number
+                   :where
+                   [?id :transaction/account-number ?account-number]
+                   [?id :transaction/description ?description]
+                   [?id :transaction/amount ?amount]
+                   [?id :transaction/date ?date]]
+                 (d/db conn) account-number)
+        transactions (map #(hash-map :id (first %)
+                                     :account-number (second %)
+                                     :description (nth % 2)
+                                     :amount (nth % 3)
+                                     :date (str (c/from-long (nth % 4)))
+                                     :key-date (f/unparse (f/formatters :year-month-day) (c/from-long (nth % 4)))) res)
+        grouped (group-by :key-date transactions)
+        with-balance (map #(hash-map (first %) {:transactions (map (fn [value] (dissoc value :key-date)) (second %)) :balance (apply + (map :amount (second %)))}) grouped)
+        result (into (sorted-map) with-balance)]
+    result))
