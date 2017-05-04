@@ -14,3 +14,7 @@
 (s/defschema Account
   {:account-number s/Int
    :balance        s/Num})
+
+(s/defschema Statement
+  {s/Keyword {:transactions [(s/recursive #'Transaction)]
+              :balance      s/Num}})

@@ -30,4 +30,10 @@
       :path-params [number :- s/Int]
       :return (s/maybe Account)
       :summary "Gets the current balance from a giving account"
-      (ok (get-balance number)))))
+      (ok (get-balance number)))
+
+    (GET "/account/:number/statement" []
+      :path-params [number :- s/Int]
+      :return (s/maybe Statement)
+      :summary "Gets the bank statement of a given account"
+      (ok (get-bank-statement number)))))
