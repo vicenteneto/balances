@@ -18,3 +18,8 @@
 (s/defschema Statement
   {s/Keyword {:transactions [(s/recursive #'Transaction)]
               :balance      s/Num}})
+
+(s/defschema DebtPeriod
+  {:principal            s/Num
+   :start                s/Str
+   (s/optional-key :end) s/Str})

@@ -36,4 +36,10 @@
       :path-params [number :- s/Int]
       :return (s/maybe Statement)
       :summary "Gets the bank statement of a given account"
-      (ok (get-bank-statement number)))))
+      (ok (get-bank-statement number)))
+
+    (GET "/account/:number/debt-periods" []
+      :path-params [number :- s/Int]
+      :return (s/maybe [DebtPeriod])
+      :summary "Gets periods of debt of a given account"
+      (ok (get-debt-periods number)))))
