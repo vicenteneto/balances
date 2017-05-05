@@ -6,7 +6,21 @@
 (def uri "datomic:free://localhost:4334/balances")
 (def conn (d/connect uri))
 
-(defn get-transaction [id]
+(defn format-transaction
+  ""
+  [transaction & [date-as-str]]
+  (let [date-as-str (or (nil? date-as-str) date-as-str)
+        date (c/from-long (nth transaction 4))
+        date (if date-as-str (str date) date)]
+    {:id             (first transaction)
+     :account-number (second transaction)
+     :description    (nth transaction 2)
+     :amount         (nth transaction 3)
+     :date           date}))
+
+(defn find-transaction-by-id
+  ""
+  [id & [date-as-str]]
   (let [res (first (d/q '[:find ?id ?account-number ?description ?amount ?date
                           :in $ ?id
                           :where
@@ -14,33 +28,22 @@
                           [?id :transaction/description ?description]
                           [?id :transaction/amount ?amount]
                           [?id :transaction/date ?date]]
-                        (d/db conn) id))
-        description (nth res 2)
-        amount (nth res 3)
-        date (str (c/from-long (nth res 4)))]
-    {:id             (first res)
-     :account-number (second res)
-     :description    description
-     :amount         amount
-     :date           date}))
+                        (d/db conn) id))]
+    (format-transaction res date-as-str)))
 
-(defn add-transaction
+(defn save-transaction
   "Adds an transaction"
   [transaction]
-  (let [account-number (bigint (:account-number transaction))
-        description (:description transaction)
-        amount (bigdec (:amount transaction))
-        date (c/to-long (c/to-date-time (:date transaction)))
-        res (second (:tx-data
+  (let [res (second (:tx-data
                       @(d/transact conn
                                    [{:db/id                      (d/tempid :db.part/user)
-                                     :transaction/account-number account-number
-                                     :transaction/description    description
-                                     :transaction/amount         amount
-                                     :transaction/date           date}])))]
-    (get-transaction (:e res))))
+                                     :transaction/account-number (bigint (:account-number transaction))
+                                     :transaction/description    (:description transaction)
+                                     :transaction/amount         (bigdec (:amount transaction))
+                                     :transaction/date           (c/to-long (c/to-date-time (:date transaction)))}])))]
+    (find-transaction-by-id (:e res) true)))
 
-(defn get-transactions
+(defn list-transactions
   "Retrieves all transactions"
   []
   (let [res (d/q '[:find ?id ?account-number ?description ?amount ?date
@@ -50,11 +53,20 @@
                    [?id :transaction/amount ?amount]
                    [?id :transaction/date ?date]]
                  (d/db conn))]
-    (map #(hash-map :id (first %)
-                    :account-number (second %)
-                    :description (nth % 2)
-                    :amount (nth % 3)
-                    :date (str (c/from-long (nth % 4)))) res)))
+    (map #(format-transaction % true) res)))
+
+(defn list-transactions-by-account-number
+  "Retrieves all transactions from a giving account"
+  [account-number]
+  (let [res (d/q '[:find ?id ?account-number ?description ?amount ?date
+                   :in $ ?account-number
+                   :where
+                   [?id :transaction/account-number ?account-number]
+                   [?id :transaction/description ?description]
+                   [?id :transaction/amount ?amount]
+                   [?id :transaction/date ?date]]
+                 (d/db conn) account-number)]
+    (map #(format-transaction % false) res)))
 
 (defn get-balance
   "Gets the current balance from a giving account"
