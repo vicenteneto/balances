@@ -97,4 +97,4 @@
                                                                      :description    "Purchase on Amazon 50 at 16/10"
                                                                      :amount         -50M
                                                                      :date           "2016-10-16T08:00:00.000Z"}]
-                                                     :balance      -50M}})))
+                                                     :balance      950M}})))

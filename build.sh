@@ -7,6 +7,6 @@ unzip datomic-free-0.9.5561.zip
 
 echo "{:user {:datomic {:install-location \"${CURRENT_DIR}/datomic-free-0.9.5561\"}}}" > ~/.lein/profiles.clj
 
-lein datomic start &
+lein datomic start & sleep 5
 lein datomic initialize
 lein midje
