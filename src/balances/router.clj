@@ -13,18 +13,18 @@
       :return Transaction
       :body [transaction (describe NewTransaction "new transaction")]
       :summary "Creates an transaction in the system"
-      (ok (add-transaction transaction)))
+      (ok (save-transaction transaction)))
 
     (GET "/transactions" []
       :return [Transaction]
       :summary "Gets all transactions"
-      (ok (get-transactions)))
+      (ok (list-transactions)))
 
     (GET "/transactions/:id" []
       :path-params [id :- Long]
       :return (s/maybe Transaction)
       :summary "Gets all details relevant to a transaction"
-      (ok (get-transaction id)))
+      (ok (find-transaction-by-id id)))
 
     (GET "/account/:number/balance" []
       :path-params [number :- s/Int]
