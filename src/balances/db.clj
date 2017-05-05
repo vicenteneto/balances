@@ -71,21 +71,28 @@
 (defn get-bank-statement
   "Retrieves bank statement of a given account"
   [account-number]
-  (let [res (d/q '[:find ?id ?account-number ?description ?amount ?date
-                   :in $ ?account-number
-                   :where
-                   [?id :transaction/account-number ?account-number]
-                   [?id :transaction/description ?description]
-                   [?id :transaction/amount ?amount]
-                   [?id :transaction/date ?date]]
-                 (d/db conn) account-number)
-        transactions (map #(hash-map :id (first %)
-                                     :account-number (second %)
-                                     :description (nth % 2)
-                                     :amount (nth % 3)
-                                     :date (str (c/from-long (nth % 4)))
-                                     :key-date (f/unparse (f/formatters :year-month-day) (c/from-long (nth % 4)))) res)
-        grouped (group-by :key-date transactions)
-        with-balance (map #(hash-map (first %) {:transactions (map (fn [value] (dissoc value :key-date)) (second %)) :balance (apply + (map :amount (second %)))}) grouped)
-        result (into (sorted-map) with-balance)]
-    result))
+  (let [db-transactions (d/q '[:find ?id ?account-number ?description ?amount ?date
+                               :in $ ?account-number
+                               :where
+                               [?id :transaction/account-number ?account-number]
+                               [?id :transaction/description ?description]
+                               [?id :transaction/amount ?amount]
+                               [?id :transaction/date ?date]]
+                             (d/db conn) account-number)
+        grouped-transactions (group-by :key-date (map #(hash-map :id (first %)
+                                                                 :account-number (second %)
+                                                                 :description (nth % 2)
+                                                                 :amount (nth % 3)
+                                                                 :date (str (c/from-long (nth % 4)))
+                                                                 :key-date (f/unparse (f/formatters :year-month-day) (c/from-long (nth % 4)))) db-transactions))
+        formatted-transactions (map #(hash-map (first %) {:transactions (map (fn [value] (dissoc value :key-date)) (second %)) :balance 0}) grouped-transactions)
+        sorted-transactions (into (sorted-map) formatted-transactions)
+        def-transactions (def transactions sorted-transactions)
+        rdc (reduce (fn
+                      [& args]
+                      (let [current-sum (apply + (map :amount (:transactions (second (second args)))))
+                            updated-sum (+ (second (first args)) current-sum)
+                            next-arg [(assoc (first (first args)) (first (second args)) updated-sum) updated-sum]
+                            def-transactions (def transactions (assoc-in transactions [(first (second args)) :balance] updated-sum))]
+                        next-arg)) [{} 0] transactions)]
+    transactions))
