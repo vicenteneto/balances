@@ -7,7 +7,7 @@
 
 (defn by-id
   ""
-  [id & [date-as-str]]
+  [id]
   (first (d/q '[:find ?id ?account-number ?description ?amount ?date
                 :in $ ?id
                 :where
@@ -41,7 +41,7 @@
 
 (defn list-by-account-number
   "Retrieves all transactions from a giving account"
-  [account-number & [date-as-str]]
+  [account-number]
   (d/q '[:find ?id ?account-number ?description ?amount ?date
          :in $ ?account-number
          :where

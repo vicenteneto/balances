@@ -2,7 +2,7 @@
   (:require [balances.account :refer :all]
             [balances.schemas :refer :all]
             [compojure.api.sweet :refer :all]
-            [ring.util.http-response :refer [ok]]
+            [ring.util.http-response :refer [ok not-found]]
             [schema.core :as s]))
 
 (def api-routes
@@ -24,13 +24,19 @@
       :path-params [id :- Long]
       :return (s/maybe Transaction)
       :summary "Gets all details relevant to a transaction"
-      (ok (find-transaction-by-id id)))
+      (let [transaction (find-transaction-by-id id)
+            has-transaction (not (nil? transaction))
+            response (if has-transaction (ok (find-transaction-by-id id)) (not-found))]
+        response))
 
     (GET "/account/:number/balance" []
       :path-params [number :- s/Int]
       :return (s/maybe Account)
       :summary "Gets the current balance from a giving account"
-      (ok (get-balance number)))
+      (let [balance (get-balance number)
+            has-balance (not (nil? balance))
+            response (if has-balance (ok (get-balance number)) (not-found))]
+        response))
 
     (GET "/account/:number/statement" []
       :path-params [number :- s/Int]
