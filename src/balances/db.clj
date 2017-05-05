@@ -59,7 +59,7 @@
 (defn get-balance
   "Gets the current balance from a giving account"
   [account-number]
-  (let [res (first (d/q '[:find ?account-number (sum ?amount)
+  (let [res (first (d/q '[:find ?account-number (sum ?amount) (sum ?id)
                           :in $ ?account-number
                           :where
                           [?id :transaction/account-number ?account-number]
