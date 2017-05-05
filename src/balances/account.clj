@@ -1,6 +1,7 @@
 (ns balances.account
   (:require [balances.db :as db]
             [balances.utils :as u]
+            [clj-time.core :as t]
             [clj-time.format :as f]))
 
 (defn find-transaction-by-id
@@ -80,9 +81,10 @@
                                contains-end (contains? debt :end)
                                is-negative (< balance 0)
                                is-principal (and is-negative (or (and contains-principal (< balance (:principal debt))) (not contains-principal)))
+                               end-date (f/unparse (f/formatters :year-month-day) (t/plus (f/parse (f/formatter :year-month-day) date) (t/days 3)))
                                debt (if is-principal (assoc debt :principal balance) debt)
                                debt (if (and (not contains-start) is-negative) (assoc debt :start date) debt)
-                               debt (if (and contains-start (not contains-end) (not is-negative)) (assoc debt :end date) debt)
+                               debt (if (and contains-start (not contains-end) (not is-negative)) (assoc debt :end end-date) debt)
                                create-new-debt (if (and (contains? debt :start) (contains? debt :end)) true false)
                                debts-periods (if create-new-debt (into [] (concat debts-periods [debt])) debts-periods)
                                debt (if create-new-debt {} debt)]
