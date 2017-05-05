@@ -9,7 +9,7 @@ To build **Balances** from scratch on OSX or Linux:
 * Install [lein](https://leiningen.org/)
 * Install [datomic-free](https://my.datomic.com/downloads/free)
 * add path to datomic in your ~/.lein/profiles.clj
-    * {:user {:datomic {:install-location "/usr/local/datomic-0.9.5561"}}}
+    * {:user {:datomic {:install-location "/path/to/your/install/dir/datomic-free-0.9.5561"}}}
 * Download [balances](https://github.com/vicenteneto/balances)
 
 ```bash
