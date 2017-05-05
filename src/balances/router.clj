@@ -1,8 +1,8 @@
 (ns balances.router
-  (:require [compojure.api.sweet :refer :all]
-            [ring.util.http-response :refer [ok]]
+  (:require [balances.account :refer :all]
             [balances.schemas :refer :all]
-            [balances.db :refer :all]
+            [compojure.api.sweet :refer :all]
+            [ring.util.http-response :refer [ok]]
             [schema.core :as s]))
 
 (def api-routes
