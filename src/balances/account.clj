@@ -6,8 +6,9 @@
 (defn find-transaction-by-id
   ""
   [id & [date-as-str]]
-  (let [res (db/by-id id date-as-str)
-        transaction (u/format-transaction res date-as-str)]
+  (let [res (db/by-id id)
+        exists-transaction (not (nil? res))
+        transaction (if exists-transaction (u/format-transaction res date-as-str))]
     transaction))
 
 (defn save-transaction
@@ -36,8 +37,8 @@
   [account-number]
   (let [res (db/sum-amount account-number)
         exists-transactions (not (nil? res))
-        balance {:account-number account-number
-                 :balance        (if exists-transactions (second res) 0)}]
+        balance (if exists-transactions {:account-number account-number
+                                         :balance        (if exists-transactions (second res) 0)})]
     balance))
 
 (defn get-bank-statement
