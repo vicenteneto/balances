@@ -8,7 +8,7 @@
      {:ui   "/"
       :spec "/swagger.json"
       :data {:info {:title       "Checking account service"
-                    :description "A service for checking accounts."}
+                    :description "A checking account from a bank that allows putting or taking money at any given time"}
              :tags [{:name "api"}]}}}
 
     api-routes))
