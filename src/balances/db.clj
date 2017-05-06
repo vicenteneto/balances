@@ -6,7 +6,7 @@
 (def conn (d/connect uri))
 
 (defn by-id
-  ""
+  "Returns a transaction by its ID"
   [id]
   (first (d/q '[:find ?id ?account-number ?description ?amount ?date
                 :in $ ?id
@@ -18,7 +18,7 @@
               (d/db conn) id)))
 
 (defn save
-  "Adds an transaction"
+  "Saves a new transaction"
   [transaction]
   (second (:tx-data
             @(d/transact conn
@@ -29,7 +29,7 @@
                            :transaction/date           (c/to-long (c/to-date-time (:date transaction)))}]))))
 
 (defn list-all
-  "Retrieves all transactions"
+  "Returns all saved transactions"
   []
   (d/q '[:find ?id ?account-number ?description ?amount ?date
          :where
@@ -40,7 +40,7 @@
        (d/db conn)))
 
 (defn list-by-account-number
-  "Retrieves all transactions from a giving account"
+  "Returns all transactions from a giving account number"
   [account-number]
   (d/q '[:find ?id ?account-number ?description ?amount ?date
          :in $ ?account-number
@@ -50,14 +50,3 @@
          [?id :transaction/amount ?amount]
          [?id :transaction/date ?date]]
        (d/db conn) account-number))
-
-(defn sum-amount
-  "Gets the current balance from a giving account"
-  [account-number]
-  (first (d/q '[:find ?account-number (sum ?amount) (sum ?id)
-                :in $ ?account-number
-                :where
-                [?id :transaction/account-number ?account-number]
-                [?id :transaction/amount ?amount]]
-              (d/db conn) account-number)))
-

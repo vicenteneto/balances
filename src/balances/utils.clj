@@ -2,7 +2,7 @@
   (:require [clj-time.coerce :as c]))
 
 (defn format-transaction
-  ""
+  "Formats a database transaction to the schema format and return it"
   [transaction & [date-as-str]]
   (let [date-as-str (or (nil? date-as-str) date-as-str)
         date (c/from-long (nth transaction 4))
