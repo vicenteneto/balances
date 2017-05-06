@@ -23,7 +23,7 @@
   "Returns all saved transactions"
   []
   (let [res (db/list-all)
-        transactions (map #(u/format-transaction % true) res)]
+        transactions (into [] (map #(u/format-transaction % true) res))]
     transactions))
 
 (defn list-transactions-by-account-number
@@ -59,7 +59,7 @@
   [account-number]
   (let [transactions (list-transactions-by-account-number account-number false)
         transactions (map #(assoc % :key-date (f/unparse (f/formatters :year-month-day) (:date %))) transactions)
-        transactions (map #(assoc % :date (str (:date %))) transactions)
+        transactions (into [] (map #(assoc % :date (str (:date %))) transactions))
         bank-statement (group-by :key-date transactions)
         bank-statement (map #(hash-map (first %) (map (fn [value] (dissoc value :key-date)) (second %))) bank-statement)
         bank-statement (into (sorted-map) bank-statement)

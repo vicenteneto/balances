@@ -1,6 +1,10 @@
 (ns balances.utils
   (:require [clj-time.coerce :as c]))
 
+(defn str-date-to-long
+  [str-date]
+  (c/to-long (c/to-date-time str-date)))
+
 (defn format-transaction
   "Formats a database transaction to the schema format and return it"
   [transaction & [date-as-str]]

@@ -1,5 +1,6 @@
 (ns balances.db
-  (:require [clj-time.coerce :as c]
+  (:require [balances.utils :refer :all]
+            [clj-time.coerce :as c]
             [datomic.api :as d]))
 
 (def uri "datomic:free://localhost:4334/balances")
@@ -26,7 +27,7 @@
                            :transaction/account-number (bigint (:account-number transaction))
                            :transaction/description    (:description transaction)
                            :transaction/amount         (bigdec (:amount transaction))
-                           :transaction/date           (c/to-long (c/to-date-time (:date transaction)))}]))))
+                           :transaction/date           (str-date-to-long (:date transaction))}]))))
 
 (defn list-all
   "Returns all saved transactions"
